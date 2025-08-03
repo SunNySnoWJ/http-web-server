@@ -9,7 +9,7 @@ def handle_request(method, path, headers=None, body=None):
         route = parsed_url.path
         query_params = parse_qs(parsed_url.query)
 
-        # ✅ 支持 /get-data?query=xxx
+        # Support /get-data?query=xxx
         if route == "/get-data":
             query_value = query_params.get("query", ["(empty)"])[0]
             html = f"""
@@ -25,7 +25,7 @@ def handle_request(method, path, headers=None, body=None):
             </html>
             """
             return build_response(200, html)
-        # ✅ 支持 /upload-list：展示 uploads 文件夹内容
+        # Support /upload-list: show files in uploads folder
         if route == "/delete":
             filename = query_params.get("filename", [None])[0]
             if filename:
@@ -75,7 +75,7 @@ def handle_request(method, path, headers=None, body=None):
             except Exception as e:
                 return build_response(500, f"<h1>500 Error</h1><p>{e}</p>")
         
-        # ✅ 返回静态页面（index.html 等）
+        # Serve static HTML pages (e.g., index.html)
         if route == "/":
             route = "/index.html"
 
@@ -127,17 +127,17 @@ def handle_request(method, path, headers=None, body=None):
         parsed_url = urlparse(path)
         route = parsed_url.path
 
-        # 映射 / 到 index.html
+        # Map "/" to "index.html" as the default homepage
         if route == "/":
             route = "/index.html"
 
         file_path = route.lstrip("/")
 
-        # 如果是静态文件（如 index.html）存在
+        # If the static file (e.g., index.html) exists, return it
         if os.path.isfile(file_path):
             return build_response(200, content_type="text/html", body=None)
 
-        # 明确支持的动态页面
+        # Explicitly support known dynamic routes
         if route in ["/get-data", "/submit", "/upload-list", "/delete"]:
             return build_response(200, content_type="text/html", body=None)
 
