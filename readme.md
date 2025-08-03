@@ -5,7 +5,6 @@ This project shows the implementation of an HTTP web server that supports four k
 ## Project Structure
 <pre><code>
 HTTP-Web-Server/
-├── __pycache__/             # Cached bytecode files
 ├── uploads/                 # Directory for storing uploaded files
 ├── index.html               # Front-end interface for testing requests
 ├── main.py                  # Entry point: initializes socket server
