@@ -24,4 +24,8 @@ HTTP-Web-Server/
 | HEAD             | Send HEAD request to `/` or `/index.html`   | Returns only HTTP headers (status, content-type, etc.) without body            |
 | View Uploads     | Click "Show Uploads" on the main page        | Lists all uploaded files. Each file can be downloaded or deleted via a button.|
 
-
+## How to run
+<pre><code>
+python main.py
+</code></pre>
+Once started, the server listens on `localhost:8080`. You can interact with it via browser or tools like curl/Postman.
