@@ -1,0 +1,125 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HTTP Web Server</title>
+</head>
+<body>
+    <h1>Welcome to my HTTP Web Server!</h1>
+    <p>This page is served for testing our server.</p>
+
+    <hr>
+    <h2>Test GET Method</h2>
+    <form action="/get-data" method="GET">
+        <label for="query">Enter Query:</label>
+        <input type="text" id="query" name="query" placeholder="Try something...">
+        <button type="submit">GET</button>
+    </form>
+    <h2>Test POST Form (User Info)</h2>
+    <form action="/submit" method="POST">
+        <table style="margin-top:10px;">
+            <tr>
+                <td><label for="name">Name:</label></td>
+                <td><input type="text" id="name" name="name" placeholder="e.g., Alice" required></td>
+            </tr>
+            <tr>
+                <td><label for="email">Email:</label></td>
+                <td><input type="email" id="email" name="email" placeholder="e.g., alice@example.com" required></td>
+            </tr>
+            <tr>
+                <td><label for="age">Age:</label></td>
+                <td><input type="number" id="age" name="age" min="0" max="150" required></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:center; padding-top:8px;">
+                    <button type="submit">POST</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <h2>Test PUT File Upload</h2>
+    <form id="fileUploadForm" onsubmit="uploadFile(event)">
+        <label for="file">Select File:</label>
+        <input type="file" id="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
+    <h2>Test HEAD Request</h2>
+    <button onclick="testHead()">Send HEAD Request</button>
+    <pre id="headResult" style="background:#f8f8f8; padding:10px; border:1px solid #ccc;"></pre>
+
+    <h2>View Uploaded Files</h2>
+    <button onclick="window.location.href='/upload-list'">Show Uploads</button>
+
+    <script>
+        function uploadFile(event) {
+            event.preventDefault();
+
+            const fileInput = document.getElementById("file");
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please choose a file first.");
+                return;
+            }
+
+            const url = "/upload/" + encodeURIComponent(file.name);
+
+            fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/octet-stream"
+                },
+                body: file
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.open();
+                document.write(html);  // 显示服务器返回的HTML页面
+                document.close();
+            })
+            .catch(err => alert("Upload failed:\n" + err));
+        }
+    </script>
+
+    <script>
+        function submitPut(event) {
+            event.preventDefault();
+
+            const data = document.getElementById("data").value;
+            fetch("/upload", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "text/plain"
+                },
+                body: data
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.open();
+                document.write(html);  // 让服务器返回的HTML渲染出来
+                document.close();
+            })
+            .catch(err => alert("Upload failed:\n" + err));
+        }
+    </script>
+
+    <script>
+    function testHead() {
+        fetch("/", { method: "HEAD" })
+            .then(response => {
+                let result = "Status: " + response.status + " " + response.statusText + "\n\n";
+                result += "Headers:\n";
+                for (let [key, value] of response.headers.entries()) {
+                    result += key + ": " + value + "\n";
+                }
+                document.getElementById("headResult").textContent = result;
+            })
+            .catch(err => {
+                document.getElementById("headResult").textContent = "HEAD request failed: " + err;
+            });
+    }
+    </script>
+
+</body>
+</html>
